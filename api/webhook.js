@@ -26,6 +26,10 @@ export async function POST(request) {
     const obj = event.data.object;
     const now = String(Math.floor(Date.now() / 1000));
 
+    // Test-clock simulations (the sample account, simulate-invoice) are read straight
+    // from Stripe, and Stripe blocks customer edits while a clock is moving. Skip them.
+    if (obj.test_clock) return Response.json({ received: true, skipped: 'test clock' });
+
     switch (event.type) {
       case 'invoice.paid':
       case 'invoice.payment_failed':
