@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MeterDemo: sample account</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="test-banner">TEST MODE - fictional sample customer. No real money.</div>
+
+  <main class="wrap">
+    <p class="small"><a href="/">&larr; MeterDemo home</a></p>
+    <h1 id="title">Sample account</h1>
+    <p class="muted">A fictional team that has used the AI assistant for a few months. Every number below is read live from Stripe:
+      usage from the Billing Meter, paid invoices from Stripe Billing. <span id="asof"></span></p>
+    <p id="error" class="error"></p>
+
+    <div id="content" hidden>
+      <section class="tiles">
+        <div class="card tile"><span class="muted small">Tokens this month (so far)</span><b id="t-current">-</b></div>
+        <div class="card tile"><span class="muted small">Estimated charge this month</span><b id="t-estimate">-</b>
+          <span class="muted small">from Stripe's invoice preview</span></div>
+        <div class="card tile"><span class="muted small">Billed to date</span><b id="t-billed">-</b></div>
+        <div class="card tile"><span class="muted small">Tokens billed to date</span><b id="t-tokens">-</b></div>
+      </section>
+
+      <section class="card chart-card">
+        <h2>Tokens per month</h2>
+        <p class="muted small">Each bar is one monthly invoice. The first 2,000 tokens each month are free; the rest cost $0.50 per 1,000.</p>
+        <div id="monthly" class="chart" role="img" aria-label="Bar chart of tokens per month"></div>
+      </section>
+
+      <section class="card chart-card">
+        <h2>Daily usage, last 60 days</h2>
+        <p class="muted small">Tokens metered per day. Weekdays are busier than weekends.</p>
+        <div id="daily" class="chart" role="img" aria-label="Bar chart of tokens per day"></div>
+      </section>
+
+      <section class="card">
+        <h2>Invoices</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Period</th><th>Invoice</th><th class="num">Tokens</th><th class="num">Free</th><th class="num">Billed tokens</th>
+                <th class="num">Amount</th><th>Status</th><th></th></tr>
+            </thead>
+            <tbody id="invoices"></tbody>
+          </table>
+        </div>
+        <div class="panel-actions inline">
+          <button id="portal" class="secondary">Open the sample's billing portal (read-only)</button>
+          <a class="button" href="/">Start your own demo</a>
+        </div>
+      </section>
+    </div>
+    <div id="tooltip" class="tooltip" hidden></div>
+  </main>
+
+  <script src="/sample.js"></script>
+</body>
+</html>

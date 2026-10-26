@@ -60,7 +60,8 @@ button, .button {
 }
 button:hover, .button:hover { background: var(--brand-dark); }
 button:disabled { opacity: 0.6; cursor: wait; }
-button.secondary { background: #fff; color: var(--brand); border: 1px solid var(--brand); }
+button.secondary, .button.secondary-link { background: #fff; color: var(--brand); border: 1px solid var(--brand); }
+.button.secondary-link:hover { background: #f3f2ff; }
 
 .error { color: var(--bad); min-height: 1.5em; }
 
@@ -104,3 +105,35 @@ button.secondary { background: #fff; color: var(--brand); border: 1px solid var(
 .status-paid { color: var(--ok); }
 .status-payment_failed, .status-canceled { color: var(--bad); }
 .panel-actions { margin-top: 16px; display: grid; gap: 8px; }
+.panel-actions.inline { display: flex; flex-wrap: wrap; gap: 10px; }
+
+/* Sample account page */
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 20px 0; }
+.tile { display: flex; flex-direction: column; gap: 4px; }
+.tile b { font-size: 1.6rem; font-variant-numeric: tabular-nums; }
+.chart-card { margin-bottom: 20px; }
+.chart svg { display: block; overflow: visible; }
+.chart .grid { stroke: var(--line); stroke-width: 1; }
+.chart .axis { fill: var(--muted); font-size: 11px; }
+.chart .bar { fill: var(--brand); }
+.chart .bar.in-progress { fill: #fff; stroke: var(--brand); stroke-width: 2; stroke-dasharray: 4 3; }
+.chart .hit { fill: transparent; cursor: default; }
+.chart .hit:hover { fill: rgba(99, 91, 255, 0.06); }
+.tooltip {
+  position: fixed;
+  pointer-events: none;
+  background: var(--text);
+  color: #fff;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  padding: 8px 10px;
+  border-radius: 8px;
+  z-index: 10;
+}
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th { color: var(--muted); font-weight: 600; font-size: 0.8rem; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+td.links a { margin-right: 10px; }
+.status-open, .status-draft { color: var(--muted); }

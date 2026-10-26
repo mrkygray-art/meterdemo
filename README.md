@@ -50,6 +50,8 @@ There's no database. Stripe holds the customers, subscriptions, usage and invoic
 | `scripts/create-price.cjs` | One-time setup: creates the tiered metered price |
 | `scripts/listen.cjs` | Forwards Stripe webhooks to your local server |
 | `scripts/simulate-invoice.js` | Uses a Stripe test clock to produce a real, finalized monthly usage invoice |
+| `scripts/seed-sample.js` | Builds the sample account (2 months of history) on a test clock |
+| `public/sample.html`, `public/sample.js`, `api/sample.js`, `api/sample-portal.js` | The read-only sample account page, its data and its read-only portal |
 | `scripts/dev.js` | Local server that runs the `/api` routes the way Vercel does |
 
 ## Guardrails (it's a public demo)
@@ -72,6 +74,18 @@ There's no database. Stripe holds the customers, subscriptions, usage and invoic
 2. **Price:** `npm run setup:price` creates the product and the graduated, metered price and prints the IDs for `.env`.
 3. **Customer Portal:** Settings → Billing → Customer portal. Invoice history on, payment method updates on, cancellation on (end of period), plan switching off. Save.
 4. **Webhooks:** locally, `npm run listen`. In production, add an endpoint for `https://<your-app>/api/webhook` with the events `invoice.paid`, `invoice.payment_failed`, `customer.subscription.created` and `customer.subscription.deleted`.
+
+## Sample account (months of history)
+
+A brand-new visitor has no invoices yet (usage is billed after the month ends), so the landing page also offers **View a sample account**: a fictional team, *Northwind Labs*, with 2 months of chat usage and paid monthly invoices plus the current month in progress. No card needed.
+
+- `npm run seed:sample` builds it (about 5-8 minutes). It puts the customer on a Stripe **test clock** that starts 2 months ago, then month by month: moves the clock to the end of the month, records that month's daily usage as meter events, and moves the clock past month end so Stripe issues, finalizes and charges the invoice. It finishes by filling in the current month.
+- `/api/sample` reads it all live from Stripe: invoices, daily usage from the meter (`value_grouping_window=day`), and the invoice preview for the current month.
+- The sample's billing portal uses its own **read-only portal configuration** (invoice history only), so visitors can't cancel it or change its card.
+- The app finds the sample through metadata on the product (`sample_customer_id`), so re-seeding needs no redeploy.
+- **Stripe deletes test clocks 30 days after creation**, so the sample must be rebuilt every few weeks (re-running the script also deletes the old one).
+
+One thing learned building it: for a test-clock customer, Stripe checks meter event timestamps against the *clock's* time, not the real time. That's why the script moves the clock to each month's end before recording that month's usage.
 
 ## See a real monthly invoice (test clock)
 
