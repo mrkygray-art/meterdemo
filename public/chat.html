@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MeterDemo: chat</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="test-banner">TEST MODE - use card 4242 4242 4242 4242. No real money.</div>
+
+  <main class="wrap">
+    <div class="layout">
+      <section class="card chat">
+        <div id="messages" class="messages">
+          <div class="msg assistant">Hi! Ask me anything. Each reply's tokens are sent to a Stripe Meter,
+            and you can watch the usage panel update.</div>
+        </div>
+        <form id="composer" class="composer">
+          <input id="input" maxlength="500" autocomplete="off" placeholder="Type a message (500 characters max)">
+          <button id="send">Send</button>
+        </form>
+      </section>
+
+      <aside class="card">
+        <h2>Usage this month</h2>
+        <div id="panel" class="muted">Loading from Stripe&hellip;</div>
+        <p id="panel-error" class="error small"></p>
+        <div class="panel-actions">
+          <button id="manage" class="secondary">Manage billing</button>
+          <a class="small muted" href="/">&larr; Back to start</a>
+        </div>
+        <p class="muted small">Stripe processes usage in the background, so new tokens can take up to a minute to appear here.
+          Each reply shows its own token count right away.</p>
+      </aside>
+    </div>
+  </main>
+
+  <script src="/chat.js"></script>
+</body>
+</html>

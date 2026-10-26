@@ -1,0 +1,18 @@
+{
+  "name": "meter-demo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Usage-based (metered) billing demo with Stripe in test mode",
+  "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
+  "scripts": {
+    "dev": "node --env-file=.env scripts/dev.js",
+    "listen": "node --env-file=.env scripts/listen.cjs",
+    "setup:price": "node --env-file=.env scripts/create-price.cjs"
+  },
+  "dependencies": {
+    "stripe": "^23.0.1"
+  }
+}

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MeterDemo: usage-based AI billing with Stripe</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="test-banner">TEST MODE - use card 4242 4242 4242 4242 (any future date, any CVC). No real money.</div>
+
+  <main class="wrap">
+    <section class="hero">
+      <h1>Pay only for the AI you use</h1>
+      <p>Chat with a small AI assistant, and every reply is metered by the tokens it uses.
+        Stripe adds up that usage and turns it into a monthly invoice, with the first 2,000 tokens free.</p>
+
+      <div class="flow" aria-label="How it works">
+        <span>You chat</span><b>&rarr;</b>
+        <span>Tokens counted</span><b>&rarr;</b>
+        <span>Stripe Meter</span><b>&rarr;</b>
+        <span>Usage-based price</span><b>&rarr;</b>
+        <span>Monthly invoice</span>
+      </div>
+
+      <button id="start">Start demo</button>
+      <a id="continue" class="button" href="/chat.html" hidden>Continue your demo</a>
+      <p id="error" class="error"></p>
+      <p class="muted small">Built by Ky Gray with Stripe Billing Meters, Checkout and the Customer Portal.
+        Everything runs in a Stripe sandbox.</p>
+    </section>
+  </main>
+
+  <script>
+    const startBtn = document.getElementById('start');
+    const errorEl = document.getElementById('error');
+
+    if (new URLSearchParams(location.search).get('checkout') === 'failed') {
+      errorEl.textContent = 'Checkout did not finish. Try again.';
+    }
+
+    // Already subscribed in this browser? Offer to go straight back to the chat.
+    fetch('/api/usage')
+      .then((r) => r.json())
+      .then((u) => {
+        if (u.started && u.subscription.status === 'active') {
+          document.getElementById('continue').hidden = false;
+          startBtn.classList.add('secondary');
+          startBtn.textContent = 'Start a new demo';
+        }
+      })
+      .catch(() => {});
+
+    // Ask the server for a Stripe Checkout page, then go there.
+    startBtn.addEventListener('click', async () => {
+      startBtn.disabled = true;
+      errorEl.textContent = '';
+      try {
+        const res = await fetch('/api/create-checkout-session', { method: 'POST' });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        location.href = data.url;
+      } catch (err) {
+        errorEl.textContent = err.message || 'Could not start Checkout.';
+        startBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
