@@ -1,9 +1,10 @@
 // POST /api/chat   body: { message: "...", history: [{ role, content }, ...] }
 // Sends the visitor's message to OpenAI, returns the reply, and reports the
-// tokens it used to the Stripe meter. That meter event is what Stripe bills.
+// tokens it used to the Stripe meters. Those meter events are what Stripe bills.
 
-import { stripe, METER_EVENT_NAME, latestSubscription } from '../lib/stripe.js';
+import { stripe, latestSubscription } from '../lib/stripe.js';
 import { customerFromRequest } from '../lib/session.js';
+import { reportUsage } from '../lib/usage-reporting.js';
 
 const MODEL = process.env.OPENAI_MODEL || 'gpt-6-luna';
 
@@ -15,10 +16,12 @@ const MAX_MESSAGES_PER_MINUTE = 6;
 const MAX_MESSAGES_PER_CUSTOMER = 30; // total, for the life of a demo customer
 
 const INSTRUCTIONS = `You are the assistant inside MeterDemo, a demo of usage-based billing with Stripe in test mode.
-Every reply you write is metered by tokens and billed through a Stripe usage-based price.
+Every reply you write is metered by tokens and billed through Stripe usage-based prices.
 Be friendly and brief (under 120 words). If asked how the demo works, explain simply:
-each reply's token count is sent to a Stripe Meter, the first 2,000 tokens each month are free,
-and Stripe adds the rest to a monthly invoice. No real money is involved.`;
+input tokens (what the visitor sends) and output tokens (what you write) go to two Stripe Meters.
+Output tokens cost the AI provider about 5x more, so they're priced higher. Each has a monthly
+free allowance (2,000 input, 500 output), and Stripe adds the rest to a monthly invoice.
+No real money is involved.`;
 
 // Best-effort per-minute limit. Each server instance keeps its own memory,
 // so the per-customer total below (stored in Stripe) is the firm cap.
@@ -107,23 +110,12 @@ export async function POST(request) {
       total: data.usage?.total_tokens || 0,
     };
 
-    // Report usage to Stripe. This is the "metering" step:
-    // - event_name matches the meter we created (ai_tokens)
-    // - stripe_customer_id says whose usage it is
-    // - value is how many tokens to add to their monthly total
-    // - identifier stops the same reply being counted twice if a request is retried
-    // Stripe processes meter events in the background, so totals can take
-    // up to a minute to show up in the usage panel.
-    await Promise.all([
-      stripe.billing.meterEvents.create({
-        event_name: METER_EVENT_NAME,
-        payload: { stripe_customer_id: customerId, value: String(usage.total) },
-        identifier: data.id,
-      }),
-      stripe.customers.update(customerId, { metadata: { demo_messages: String(sent + 1) } }),
-    ]);
+    // Report usage to Stripe (the "metering" step). The reply has already been
+    // generated, so we must not lose this usage: reportUsage retries, and if Stripe
+    // still can't be reached it records the tokens as unreported for reconciliation.
+    const reported = await reportUsage(customerId, data.id, usage, { messages: sent + 1 });
 
-    return Response.json({ reply, usage });
+    return Response.json({ reply, usage, reported });
   } catch (err) {
     console.error('chat failed:', err.message);
     return Response.json({ error: 'Something went wrong. Try again.' }, { status: 500 });

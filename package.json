@@ -10,9 +10,9 @@
   "scripts": {
     "dev": "node --env-file=.env scripts/dev.js",
     "listen": "node --env-file=.env scripts/listen.cjs",
-    "setup:price": "node --env-file=.env scripts/create-price.cjs",
-    "simulate:invoice": "node --env-file=.env scripts/simulate-invoice.js",
-    "seed:sample": "node --env-file=.env scripts/seed-sample.js"
+    "setup:pricing": "node --env-file=.env scripts/setup-pricing.js",
+    "seed:sample": "node --env-file=.env scripts/seed-sample.js",
+    "reconcile": "node --env-file=.env scripts/reconcile.js"
   },
   "dependencies": {
     "stripe": "^23.0.1"

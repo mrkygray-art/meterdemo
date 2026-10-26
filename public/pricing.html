@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MeterDemo: pricing lab</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="test-banner">TEST MODE - fictional sample customers. No real money.</div>
+  <nav class="topnav wrap">
+    <a href="/">MeterDemo</a>
+    <a href="/sample.html">Sample customers</a>
+    <a href="/pricing.html" aria-current="page">Pricing lab</a>
+    <a href="/" class="nav-cta">Try the live demo</a>
+  </nav>
+
+  <main class="wrap">
+    <h1>Pricing lab</h1>
+    <p class="muted">Same customers, same usage, four ways to price it. Each row takes a sample customer's latest full month of
+      real usage from the Stripe meters and works out what they'd pay, what serving them costs, and what's left: the gross margin.</p>
+    <p id="error" class="error"></p>
+
+    <div id="content" hidden>
+      <section class="card findings">
+        <h2>What the numbers show</h2>
+        <ol id="findings"></ol>
+      </section>
+
+      <div id="tables"></div>
+
+      <section class="card">
+        <h2>Assumptions</h2>
+        <ul id="assumptions" class="muted small"></ul>
+      </section>
+    </div>
+  </main>
+
+  <script src="/charts.js"></script>
+  <script src="/pricing.js"></script>
+</body>
+</html>

@@ -3,36 +3,71 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MeterDemo: usage-based AI billing with Stripe</title>
+  <title>MeterDemo: usage-based billing for an AI product, built on Stripe</title>
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
   <div class="test-banner">TEST MODE - use card 4242 4242 4242 4242 (any future date, any CVC). No real money.</div>
+  <nav class="topnav wrap">
+    <a href="/">MeterDemo</a>
+    <a href="/sample.html">Sample customers</a>
+    <a href="/pricing.html">Pricing lab</a>
+    <a href="https://github.com/mrkygray-art/meterdemo/blob/main/docs/SOLUTION_BRIEF.md" target="_blank" rel="noopener">Solution brief</a>
+  </nav>
 
   <main class="wrap">
     <section class="hero">
-      <h1>Pay only for the AI you use</h1>
-      <p>Chat with a small AI assistant, and every reply is metered by the tokens it uses.
-        Stripe adds up that usage and turns it into a monthly invoice, with the first 2,000 tokens free.</p>
-
-      <div class="flow" aria-label="How it works">
-        <span>You chat</span><b>&rarr;</b>
-        <span>Tokens counted</span><b>&rarr;</b>
-        <span>Stripe Meter</span><b>&rarr;</b>
-        <span>Usage-based price</span><b>&rarr;</b>
-        <span>Monthly invoice</span>
-      </div>
+      <h1>Usage-based billing for an AI product, without losing money on heavy users</h1>
+      <p>An AI assistant that charges a flat monthly fee has a hidden problem: every reply costs money to generate, and heavy
+        users can cost more than they pay. MeterDemo meters every reply in Stripe, prices input and output tokens separately
+        so price follows cost, and makes sure no usage goes unbilled.</p>
 
       <div class="panel-actions inline">
-        <button id="start">Start demo</button>
+        <button id="start">Try the live demo</button>
         <a id="continue" class="button" href="/chat.html" hidden>Continue your demo</a>
-        <a class="button secondary-link" href="/sample.html">View a sample account</a>
+        <a class="button secondary-link" href="/sample.html">See sample customers</a>
+        <a class="button secondary-link" href="/pricing.html">Open the pricing lab</a>
       </div>
-      <p class="muted small">No time to chat? The sample account shows months of usage and paid invoices, no card needed.</p>
       <p id="error" class="error"></p>
-      <p class="muted small">Built by Ky Gray with Stripe Billing Meters, Checkout and the Customer Portal.
-        Everything runs in a Stripe sandbox.</p>
     </section>
+
+    <section class="steps">
+      <div class="card">
+        <span class="step">1. Problem</span>
+        <h2>Flat pricing loses money</h2>
+        <p class="muted">On a $49 flat plan, the sample power user costs more in AI usage than they pay, while light users overpay
+          and leave. One token price doesn't fix it either: output tokens cost 5x more than input.</p>
+      </div>
+      <div class="card">
+        <span class="step">2. Solution</span>
+        <h2>Price follows cost, in Stripe</h2>
+        <p class="muted">Two Stripe Billing Meters (input and output tokens), each with a graduated price and a free allowance.
+          Prices are found by lookup key, so pricing can change in Stripe without a code deploy.</p>
+      </div>
+      <div class="card">
+        <span class="step">3. Safeguard</span>
+        <h2>No unbilled usage</h2>
+        <p class="muted">If reporting usage to Stripe fails after a reply, it's retried with the same ID (never double-billed),
+          then recorded for a reconciliation job that compares our records with Stripe's meters.</p>
+      </div>
+    </section>
+
+    <section class="card how">
+      <h2>How a reply becomes an invoice</h2>
+      <div class="flow" aria-label="How it works">
+        <span>Customer chats</span><b>&rarr;</b>
+        <span>AI reply + token counts</span><b>&rarr;</b>
+        <span>Input &amp; output meters</span><b>&rarr;</b>
+        <span>Graduated prices</span><b>&rarr;</b>
+        <span>Monthly invoice</span><b>&rarr;</b>
+        <span>Card charged, webhook</span>
+      </div>
+      <p class="muted small">The live demo: subscribe with the test card in Stripe Checkout, chat, and watch the usage panel and
+        Stripe's invoice preview update. Manage billing opens Stripe's Customer Portal.</p>
+    </section>
+
+    <p class="muted small">Built by Ky Gray with Stripe Billing Meters, Checkout, the Customer Portal, webhooks and test clocks.
+      Everything runs in a Stripe sandbox. Not affiliated with Stripe.</p>
   </main>
 
   <script>

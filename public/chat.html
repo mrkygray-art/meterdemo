@@ -8,12 +8,17 @@
 </head>
 <body>
   <div class="test-banner">TEST MODE - use card 4242 4242 4242 4242. No real money.</div>
+  <nav class="topnav wrap">
+    <a href="/">MeterDemo</a>
+    <a href="/sample.html">Sample customers</a>
+    <a href="/pricing.html">Pricing lab</a>
+  </nav>
 
   <main class="wrap">
     <div class="layout">
       <section class="card chat">
         <div id="messages" class="messages">
-          <div class="msg assistant">Hi! Ask me anything. Each reply's tokens are sent to a Stripe Meter, and you can watch the usage panel update.</div>
+          <div class="msg assistant">Hi! Ask me anything. Each reply's input and output tokens are sent to two Stripe Meters, and you can watch the usage panel update.</div>
         </div>
         <form id="composer" class="composer">
           <input id="input" maxlength="500" autocomplete="off" placeholder="Type a message (500 characters max)">
@@ -27,7 +32,7 @@
         <p id="panel-error" class="error small"></p>
         <div class="panel-actions">
           <button id="manage" class="secondary">Manage billing</button>
-          <a class="small" href="/sample.html">See a sample account with paid invoices &rarr;</a>
+          <a class="small" href="/sample.html">See sample customers with paid invoices &rarr;</a>
           <a class="small muted" href="/">&larr; Back to start</a>
         </div>
         <p class="muted small">Stripe processes usage in the background, so new tokens can take up to a minute to appear here.

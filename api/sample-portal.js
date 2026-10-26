@@ -6,13 +6,17 @@
 import { stripe } from '../lib/stripe.js';
 import { sampleIds } from '../lib/sample.js';
 
+// POST /api/sample-portal?i=0   (which sample customer: 0, 1 or 2)
 export async function POST(request) {
   try {
     const ids = await sampleIds();
-    if (!ids) return Response.json({ error: 'The sample account is being rebuilt. Try again soon.' }, { status: 503 });
+    if (!ids) return Response.json({ error: 'The sample accounts are being rebuilt. Try again soon.' }, { status: 503 });
+    const i = Number(new URL(request.url).searchParams.get('i') || 0);
+    const customerId = ids.customerIds[i];
+    if (!customerId) return Response.json({ error: 'Unknown sample account.' }, { status: 400 });
 
     const portal = await stripe.billingPortal.sessions.create({
-      customer: ids.customerId,
+      customer: customerId,
       configuration: ids.portalConfig,
       return_url: `${new URL(request.url).origin}/sample.html`,
     });

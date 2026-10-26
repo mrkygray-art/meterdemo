@@ -2,7 +2,7 @@
 // Starts the demo: creates a Stripe customer, then a Stripe Checkout page
 // where the visitor subscribes with the 4242 test card.
 
-import { stripe, PRICE_ID } from '../lib/stripe.js';
+import { stripe, currentPriceIds } from '../lib/stripe.js';
 
 export async function POST(request) {
   try {
@@ -17,9 +17,10 @@ export async function POST(request) {
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription', // sign up for a recurring plan, not a one-off payment
       customer: customer.id,
+      // Two metered prices (input and output tokens), found by lookup key.
       // Metered prices have no quantity: the amount depends on usage, which
       // Stripe adds up from meter events and bills at the end of the month.
-      line_items: [{ price: PRICE_ID }],
+      line_items: (await currentPriceIds()).map((price) => ({ price })),
       // Stripe swaps {CHECKOUT_SESSION_ID} for the real ID when it redirects back.
       success_url: `${origin}/api/checkout-complete?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/`,

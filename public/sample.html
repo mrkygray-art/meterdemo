@@ -3,60 +3,72 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MeterDemo: sample account</title>
+  <title>MeterDemo: sample customers</title>
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-  <div class="test-banner">TEST MODE - fictional sample customer. No real money.</div>
+  <div class="test-banner">TEST MODE - fictional sample customers. No real money.</div>
+  <nav class="topnav wrap">
+    <a href="/">MeterDemo</a>
+    <a href="/sample.html" aria-current="page">Sample customers</a>
+    <a href="/pricing.html">Pricing lab</a>
+    <a href="/" class="nav-cta">Try the live demo</a>
+  </nav>
 
   <main class="wrap">
-    <p class="small"><a href="/">&larr; MeterDemo home</a></p>
-    <h1 id="title">Sample account</h1>
-    <p class="muted">A fictional team that has used the AI assistant for a few months. Every number below is read live from Stripe:
-      usage from the Billing Meter, paid invoices from Stripe Billing. <span id="asof"></span></p>
+    <h1>Sample customers</h1>
+    <p class="muted">Three fictional customers on the live pricing, with very different usage. Every number is read from Stripe:
+      usage from the input and output Billing Meters, invoices and card fees from Stripe Billing, and this month's estimate
+      from Stripe's invoice preview. <span id="asof"></span></p>
     <p id="error" class="error"></p>
 
+    <div id="tabs" class="tabs" role="tablist"></div>
+
     <div id="content" hidden>
+      <p id="profile" class="profile"></p>
+
       <section class="tiles">
-        <div class="card tile"><span class="muted small">Tokens this month (so far)</span><b id="t-current">-</b></div>
+        <div class="card tile"><span class="muted small">Tokens this month (so far)</span><b id="t-current">-</b>
+          <span id="t-split" class="muted small"></span></div>
         <div class="card tile"><span class="muted small">Estimated charge this month</span><b id="t-estimate">-</b>
           <span class="muted small">from Stripe's invoice preview</span></div>
-        <div class="card tile"><span class="muted small">Billed to date</span><b id="t-billed">-</b></div>
-        <div class="card tile"><span class="muted small">Tokens billed to date</span><b id="t-tokens">-</b></div>
+        <div class="card tile"><span class="muted small">Billed to date</span><b id="t-billed">-</b>
+          <span id="t-invoices" class="muted small"></span></div>
+        <div class="card tile"><span class="muted small">Gross margin to date</span><b id="t-margin">-</b>
+          <span id="t-profit" class="muted small"></span></div>
       </section>
 
       <section class="card chart-card">
-        <h2>Tokens per month</h2>
-        <p class="muted small">Each bar is one monthly invoice. The first 2,000 tokens each month are free; the rest cost $0.50 per 1,000.</p>
-        <div id="monthly" class="chart" role="img" aria-label="Bar chart of tokens per month"></div>
-      </section>
-
-      <section class="card chart-card">
-        <h2>Daily usage, last 60 days</h2>
-        <p class="muted small">Tokens metered per day. Weekdays are busier than weekends.</p>
-        <div id="daily" class="chart" role="img" aria-label="Bar chart of tokens per day"></div>
+        <h2>Daily usage</h2>
+        <p class="muted small">Tokens metered per day: input (what the customer sends) and output (what the AI writes). Output tokens cost 5x more to produce.</p>
+        <div class="legend"><span class="key key-input"></span>Input tokens <span class="key key-output"></span>Output tokens</div>
+        <div id="daily" class="chart" role="img" aria-label="Stacked bar chart of input and output tokens per day"></div>
       </section>
 
       <section class="card">
-        <h2>Invoices</h2>
+        <h2>Invoices and margin</h2>
+        <p class="muted small">Revenue is the invoice total. AI cost uses the model's list price for input and output tokens.
+          Stripe fees are the card fee Stripe actually charged plus the 0.7% Billing fee.</p>
         <div class="table-wrap">
           <table>
             <thead>
-              <tr><th>Period</th><th>Invoice</th><th class="num">Tokens</th><th class="num">Free</th><th class="num">Billed tokens</th>
-                <th class="num">Amount</th><th>Status</th><th></th></tr>
+              <tr><th>Period</th><th class="num">Input</th><th class="num">Output</th><th class="num">Revenue</th>
+                <th class="num">AI cost</th><th class="num">Stripe fees</th><th class="num">Gross profit</th><th class="num">Margin</th>
+                <th>Status</th><th></th></tr>
             </thead>
             <tbody id="invoices"></tbody>
           </table>
         </div>
         <div class="panel-actions inline">
-          <button id="portal" class="secondary">Open the sample's billing portal (read-only)</button>
-          <a class="button" href="/">Start your own demo</a>
+          <button id="portal" class="secondary">Open this customer's billing portal (read-only)</button>
+          <a class="button" href="/pricing.html">See how other pricing models compare</a>
         </div>
       </section>
     </div>
     <div id="tooltip" class="tooltip" hidden></div>
   </main>
 
+  <script src="/charts.js"></script>
   <script src="/sample.js"></script>
 </body>
 </html>

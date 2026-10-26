@@ -44,14 +44,17 @@ async function loadUsage() {
     panelError.textContent = '';
 
     const sub = u.subscription;
-    const pct = u.freeAllowance ? Math.min((u.tokensUsed / u.freeAllowance) * 100, 100) : 100;
     let subText = sub.status;
     if (sub.cancelAtPeriodEnd && sub.status === 'active') subText = `cancels ${date(sub.periodEnd)}`;
 
     let html = '';
-    html += row('Tokens used', num(u.tokensUsed));
-    html += `<div class="bar" title="Free allowance used"><div style="width:${pct}%"></div></div>`;
-    html += row('Free tokens left', `${num(u.freeRemaining)} of ${num(u.freeAllowance)}`);
+    // One block per metered price (v2: input and output tokens; v1: one token price).
+    for (const m of u.meters) {
+      const pct = m.free ? Math.min((m.used / m.free) * 100, 100) : 100;
+      html += row(m.label, num(m.used));
+      html += `<div class="bar" title="${m.label}: free allowance used"><div style="width:${pct}%"></div></div>`;
+      html += `<p class="muted small" style="margin:-8px 0 8px">${num(m.freeRemaining)} of ${num(m.free)} free left</p>`;
+    }
     html += row('Estimated charge', u.estimate ? money(u.estimate.amountDue, u.estimate.currency) : '-');
     html += row('Invoice date', u.estimate ? date(u.estimate.invoiceDate) : '-');
     html += row('Subscription', subText, `status-${sub.status}`);
@@ -94,7 +97,8 @@ form.addEventListener('submit', async (e) => {
     if (!res.ok) throw new Error(data.error);
 
     const u = data.usage;
-    addMessage('assistant', data.reply, `${num(u.total)} tokens metered (${num(u.input)} in, ${num(u.output)} out)`);
+    const note = data.reported ? 'metered' : 'saved for reconciliation (Stripe was unreachable)';
+    addMessage('assistant', data.reply, `${num(u.input)} input + ${num(u.output)} output tokens ${note}`);
     history.push({ role: 'user', content: message }, { role: 'assistant', content: data.reply });
 
     // Stripe processes meter events in the background (often 30-60 seconds),
