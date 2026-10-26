@@ -4,6 +4,8 @@
 
 AI products have a pricing problem: every reply costs money to generate, so on a flat plan the heaviest users can cost more than they pay. MeterDemo shows the fix on Stripe. It meters every AI reply, prices **input and output tokens separately** (output costs the AI provider about 5x more), and makes sure **no usage goes unbilled**.
 
+![Sample customer Atlas Robotics: usage this month, Stripe's estimated charge, billed to date, 49% gross margin, and daily input and output tokens](docs/meterdemo-sample.webp)
+
 > **TEST MODE ONLY.** Use card `4242 4242 4242 4242`, any future date, any CVC. No real money moves, and the app refuses to start with a live Stripe key. Customers in the samples are fictional.
 
 ## Problem → solution → result
