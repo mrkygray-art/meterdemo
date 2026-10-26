@@ -10,7 +10,8 @@
   "scripts": {
     "dev": "node --env-file=.env scripts/dev.js",
     "listen": "node --env-file=.env scripts/listen.cjs",
-    "setup:price": "node --env-file=.env scripts/create-price.cjs"
+    "setup:price": "node --env-file=.env scripts/create-price.cjs",
+    "simulate:invoice": "node --env-file=.env scripts/simulate-invoice.js"
   },
   "dependencies": {
     "stripe": "^23.0.1"

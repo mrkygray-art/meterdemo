@@ -49,6 +49,7 @@ There's no database. Stripe holds the customers, subscriptions, usage and invoic
 | `lib/session.js` | Signed cookie helpers |
 | `scripts/create-price.cjs` | One-time setup: creates the tiered metered price |
 | `scripts/listen.cjs` | Forwards Stripe webhooks to your local server |
+| `scripts/simulate-invoice.js` | Uses a Stripe test clock to produce a real, finalized monthly usage invoice |
 | `scripts/dev.js` | Local server that runs the `/api` routes the way Vercel does |
 
 ## Guardrails (it's a public demo)
@@ -71,6 +72,26 @@ There's no database. Stripe holds the customers, subscriptions, usage and invoic
 2. **Price:** `npm run setup:price` creates the product and the graduated, metered price and prints the IDs for `.env`.
 3. **Customer Portal:** Settings → Billing → Customer portal. Invoice history on, payment method updates on, cancellation on (end of period), plan switching off. Save.
 4. **Webhooks:** locally, `npm run listen`. In production, add an endpoint for `https://<your-app>/api/webhook` with the events `invoice.paid`, `invoice.payment_failed`, `customer.subscription.created` and `customer.subscription.deleted`.
+
+## See a real monthly invoice (test clock)
+
+Usage invoices normally appear once a month. To see one now, run:
+
+```
+npm run simulate:invoice
+```
+
+It uses a Stripe **test clock** (a pretend calendar for test customers). It creates a customer on the clock, subscribes them, records a month of chat usage (18 replies, 10,902 tokens), then moves the clock past the end of the month. Stripe issues the invoice, finalizes it, and charges the test card:
+
+| Invoice line | Amount |
+|---|---|
+| 2,000 tokens (Tier 1, free allowance) | $0.00 |
+| 8,902 tokens (Tier 2 at $0.0005) | $4.45 |
+| **Total (paid with test card 4242)** | **$4.45** |
+
+The script prints links to the hosted invoice and the PDF. Simulations show up under Billing → Subscriptions → Simulations in the Dashboard, and Stripe deletes them after 30 days.
+
+Note: while a test clock is moving, Stripe won't let anything edit that customer. If the webhook receives `invoice.paid` mid-advance, it answers 500 and Stripe retries it later (or resend it from the Dashboard). Real customers never hit this.
 
 ## Cleaning up test data
 
